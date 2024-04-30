@@ -14,8 +14,11 @@ import java.time.LocalDateTime;
 @Builder
 public class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
+    private String code;
     private String title;
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
     private String pictureURL;
     private LocalDateTime publishedAt;
