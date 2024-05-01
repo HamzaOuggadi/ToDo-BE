@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 public class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String code;
     private String title;
     @Lob
     @Column(columnDefinition = "TEXT")

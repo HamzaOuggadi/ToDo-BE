@@ -1,11 +1,14 @@
 package net.hamzaouggadi.todobe.service;
 
-import net.hamzaouggadi.todobe.entities.AppUser;
+import net.hamzaouggadi.todobe.dtos.AppUserDTO;
 
 public interface AppUserService {
 
-    AppUser getUserByEmail(String email);
-    AppUser saveUser(AppUser user);
-    AppUser updateUser(AppUser user);
+    AppUserDTO getUserByEmail(String email);
+    void saveUser(AppUserDTO userDTO);
+    void updateUser(AppUserDTO userDTO);
     void deleteUser(String email);
+
+    boolean checkIfUserExistsByEmail(String email);
+
 }

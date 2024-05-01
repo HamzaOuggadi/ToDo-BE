@@ -9,8 +9,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
 
-    @Mapping(source = "toDoList.code", target = "toDoListCode")
+    @Mapping(source = "toDoList.id", target = "toDoListId")
     TaskDTO toTaskDTO(Task task);
-    @Mapping(source = "toDoListCode", target = "toDoList.code")
+    @Mapping(source = "toDoListId", target = "toDoList.id")
     Task toTask(TaskDTO taskDTO);
 }

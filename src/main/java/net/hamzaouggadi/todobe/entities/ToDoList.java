@@ -15,7 +15,6 @@ import java.util.List;
 public class ToDoList {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String code;
     private String name;
     private Status status;
     @OneToMany(mappedBy = "toDoList")

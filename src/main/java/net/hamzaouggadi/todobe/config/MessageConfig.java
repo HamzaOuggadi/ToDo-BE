@@ -1,4 +1,4 @@
-package net.hamzaouggadi.todobe.controller;
+package net.hamzaouggadi.todobe.config;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

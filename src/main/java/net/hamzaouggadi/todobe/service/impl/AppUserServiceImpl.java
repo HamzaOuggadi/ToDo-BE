@@ -1,8 +1,10 @@
 package net.hamzaouggadi.todobe.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import net.hamzaouggadi.todobe.dtos.AppUserDTO;
 import net.hamzaouggadi.todobe.entities.AppUser;
 import net.hamzaouggadi.todobe.exceptions.AppUserException;
+import net.hamzaouggadi.todobe.mappers.AppUserMapper;
 import net.hamzaouggadi.todobe.repository.AppUserRepository;
 import net.hamzaouggadi.todobe.service.AppUserService;
 import org.springframework.context.MessageSource;
@@ -21,13 +23,14 @@ public class AppUserServiceImpl implements AppUserService {
 
     private final AppUserRepository appUserRepository;
     private final MessageSource messageSource;
+    private final AppUserMapper appUserMapper;
 
 
     @Override
-    public AppUser getUserByEmail(String email) {
+    public AppUserDTO getUserByEmail(String email) {
         Optional<AppUser> appUserOptional = appUserRepository.findByEmailIgnoreCase(email);
         if (appUserOptional.isPresent()) {
-            return appUserOptional.get();
+            return appUserMapper.toAppUserDTO(appUserOptional.get());
         } else {
             throw new AppUserException(
                     messageSource.getMessage(
@@ -41,15 +44,14 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public AppUser saveUser(AppUser user) {
-        if (!checkIfUserExistsByEmail(user.getEmail())) {
-            user.setEmail(user.getEmail().toLowerCase());
-            return appUserRepository.save(user);
+    public void saveUser(AppUserDTO userDTO) {
+        if (!checkIfUserExistsByEmail(userDTO.email())) {
+            appUserRepository.save(appUserMapper.toAppUser(userDTO));
         } else {
             throw new AppUserException(
                     messageSource.getMessage(
                             "user.already.exists",
-                            new Object[]{user.getEmail()},
+                            new Object[]{userDTO.email()},
                             Locale.getDefault()
                     ),
                     HttpStatus.CONFLICT
@@ -58,20 +60,8 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public AppUser updateUser(AppUser user) {
-        if (checkIfUserExistsByEmail(user.getEmail())) {
-            user.setEmail(user.getEmail().toLowerCase());
-            return appUserRepository.save(user);
-        } else {
-            throw new AppUserException(
-                    messageSource.getMessage(
-                            "no.user.found",
-                            new Object[]{user.getEmail()},
-                            Locale.getDefault()
-                    ),
-                    HttpStatus.NOT_FOUND
-            );
-        }
+    public void updateUser(AppUserDTO userDTO) {
+        appUserRepository.save(appUserMapper.toAppUser(userDTO));
     }
 
     @Override
@@ -91,7 +81,8 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
 
-    private boolean checkIfUserExistsByEmail(String email) {
+    @Override
+    public boolean checkIfUserExistsByEmail(String email) {
         return appUserRepository.findByEmailIgnoreCase(email.toLowerCase()).isPresent();
     }
 }

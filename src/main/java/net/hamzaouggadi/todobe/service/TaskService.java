@@ -1,16 +1,17 @@
 package net.hamzaouggadi.todobe.service;
 
-import net.hamzaouggadi.todobe.entities.Task;
+import net.hamzaouggadi.todobe.dtos.TaskDTO;
 
 import java.util.List;
 
 public interface TaskService {
 
-    Task getTaskByCode(String code);
-    Task getTaskById(Long id);
-    List<Task> getTasksByUserEmail(String email);
-    List<Task> getTasksByTodoListId(Long todoListId);
-    Task createTask(Task task);
-    Task updateTask(Task task);
-    void deleteTask(String code);
+    TaskDTO getTaskById(Long taskId);
+    List<TaskDTO> getAllTasksByUserEmail(String email);
+    List<TaskDTO> getAllTasksByTodoListId(Long todoListId);
+    void createTask(TaskDTO taskDTO);
+    void updateTask(TaskDTO taskDTO);
+    void setTaskToDoneById(Long taskId);
+    void deleteTask(Long taskId);
+
 }
