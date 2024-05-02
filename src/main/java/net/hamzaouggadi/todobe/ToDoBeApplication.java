@@ -4,10 +4,15 @@ import com.github.javafaker.Faker;
 import net.hamzaouggadi.todobe.dtos.PostDTO;
 import net.hamzaouggadi.todobe.entities.AppUser;
 import net.hamzaouggadi.todobe.entities.Post;
+import net.hamzaouggadi.todobe.entities.Task;
+import net.hamzaouggadi.todobe.entities.ToDoList;
 import net.hamzaouggadi.todobe.enums.AppUserType;
+import net.hamzaouggadi.todobe.enums.Status;
 import net.hamzaouggadi.todobe.mappers.PostMapper;
 import net.hamzaouggadi.todobe.repository.AppUserRepository;
 import net.hamzaouggadi.todobe.repository.PostRepository;
+import net.hamzaouggadi.todobe.repository.TaskRepository;
+import net.hamzaouggadi.todobe.repository.ToDoListRepository;
 import net.hamzaouggadi.todobe.service.PostService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 @SpringBootApplication
@@ -29,9 +35,12 @@ public class ToDoBeApplication {
     CommandLineRunner start(PostRepository postRepository,
                             AppUserRepository appUserRepository,
                             PostService postService,
-                            PostMapper postMapper) {
+                            PostMapper postMapper,
+                            TaskRepository taskRepository,
+                            ToDoListRepository toDoListRepository) {
         return args -> {
             Faker faker = new Faker();
+            Random random = new Random();
 
             AppUser user = AppUser.builder()
                     .email("hamza@email.com")
@@ -42,28 +51,36 @@ public class ToDoBeApplication {
 
             appUserRepository.save(user);
 
-            Post post = Post.builder()
+            for (int i = 0; i < 10; i++) {
+                Post post = Post.builder()
+                        .appUser(user)
+                        .title(faker.lorem().sentence())
+                        .content(faker.lorem().paragraph(30))
+                        .publishedAt(LocalDateTime.now())
+                        .build();
+
+                postRepository.save(post);
+            }
+
+            ToDoList toDoList = ToDoList.builder()
                     .appUser(user)
-                    .title(faker.lorem().paragraph())
-                    .content(faker.lorem().paragraph(30))
-                    .publishedAt(LocalDateTime.now())
+                    .name("Learn Game Dev")
+                    .status(Status.IN_PROGRESS)
                     .build();
 
+            toDoListRepository.save(toDoList);
 
-
-
-
-            postRepository.save(post);
-
-            PostDTO postDTO = postMapper.toPostDTO(postRepository.findById(1L).orElseThrow());
-
-            System.out.println("DTO id type : " + postDTO.id().getClass() + "value : " + postDTO.id());
-
-            Post post2 = postMapper.toPost(postDTO);
-
-            System.out.println("Post 2 id type : " + post.getId().getClass() + "value : " + post.getId());
-
-            System.out.println(postService.getAllPostsByUserEmail("hamza@email.com").get(0).content());
+            for (int i = 0; i < 10; i++) {
+                Task task = Task.builder()
+                        .title(faker.lorem().sentence())
+                        .description(faker.lorem().paragraph(3))
+                        .status(random.nextBoolean() ? Status.TO_DO : Status.DONE)
+                        .createdAt(LocalDateTime.now())
+                        .dueDate(LocalDateTime.now().plusDays(10))
+                        .toDoList(toDoList)
+                        .build();
+                taskRepository.save(task);
+            }
         };
     }
 

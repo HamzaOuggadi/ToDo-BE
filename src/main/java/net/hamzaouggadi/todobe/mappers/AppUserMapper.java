@@ -13,7 +13,7 @@ public interface AppUserMapper {
     @Mapping(source = "id", target = "id", qualifiedByName = "idToStringConverter")
     AppUserDTO toAppUserDTO(AppUser appUser);
 
-    @Mapping(source = "id", target = "id", qualifiedByName = "idToLongConverter")
+    @Mapping(target = "id", ignore = true)
     AppUser toAppUser(AppUserDTO appUserDTO);
 
 

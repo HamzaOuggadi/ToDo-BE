@@ -8,6 +8,7 @@ public record AppUserDTO(String id,
                          String email,
                          String password,
                          LocalDateTime registrationDate,
+                         String profilePicture,
                          AppUserType appUserType) {
 
 }

@@ -17,6 +17,8 @@ public class Task {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
     private Status status;
     private LocalDateTime createdAt;

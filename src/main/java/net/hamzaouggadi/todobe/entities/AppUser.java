@@ -22,6 +22,7 @@ public class AppUser {
     private String password;
     private LocalDateTime registrationDate;
     private String profilePicture;
+    @Enumerated(EnumType.STRING)
     private AppUserType appUserType;
     @OneToMany(mappedBy = "appUser")
     private List<ToDoList> toDoLists;

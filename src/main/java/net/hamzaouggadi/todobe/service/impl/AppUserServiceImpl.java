@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -46,7 +47,9 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public void saveUser(AppUserDTO userDTO) {
         if (!checkIfUserExistsByEmail(userDTO.email())) {
-            appUserRepository.save(appUserMapper.toAppUser(userDTO));
+            AppUser appUser = appUserMapper.toAppUser(userDTO);
+            appUser.setRegistrationDate(LocalDateTime.now());
+            appUserRepository.save(appUser);
         } else {
             throw new AppUserException(
                     messageSource.getMessage(
@@ -61,7 +64,15 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public void updateUser(AppUserDTO userDTO) {
-        appUserRepository.save(appUserMapper.toAppUser(userDTO));
+        AppUser appUser = appUserRepository.findByEmailIgnoreCase(userDTO.email().toLowerCase()).orElseThrow(
+                () -> new AppUserException(messageSource.getMessage(
+                    "no.user.found",
+                    new Object[]{userDTO.email()},
+                    Locale.getDefault()
+        )));
+        appUser.setPassword(userDTO.password());
+        appUser.setProfilePicture(userDTO.profilePicture());
+        appUserRepository.save(appUser);
     }
 
     @Override

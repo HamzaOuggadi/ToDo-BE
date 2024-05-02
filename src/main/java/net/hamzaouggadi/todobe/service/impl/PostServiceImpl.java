@@ -2,6 +2,7 @@ package net.hamzaouggadi.todobe.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import net.hamzaouggadi.todobe.dtos.PostDTO;
+import net.hamzaouggadi.todobe.entities.AppUser;
 import net.hamzaouggadi.todobe.entities.Post;
 import net.hamzaouggadi.todobe.exceptions.AppUserException;
 import net.hamzaouggadi.todobe.exceptions.PostException;
@@ -86,7 +87,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void updatePost(PostDTO postDTO) {
-        postRepository.save(postMapper.toPost(postDTO));
+        AppUser appUser = appUserRepository.findByEmailIgnoreCase(postDTO.writerEmail()).orElseThrow();
+        Post post = postMapper.toPost(postDTO);
+        post.setAppUser(appUser);
+        postRepository.save(post);
     }
 
     @Override
